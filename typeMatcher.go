@@ -7,7 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-const TypeMatcherDescription = "callback function returns true"
+const typeMatcherFmt = "SameTypeAs(%v)"
 
 func SameTypeAs(example interface{}) gomock.Matcher {
 	return typeMatcher{example}
@@ -41,5 +41,5 @@ func (o typeMatcher) Matches(x interface{}) bool {
 }
 
 func (o typeMatcher) String() string {
-	return TypeMatcherDescription
+	return fmt.Sprintf(typeMatcherFmt, reflect.TypeOf(o.example).String())
 }
