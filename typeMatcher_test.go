@@ -48,8 +48,26 @@ func TestTypeMatcher(t *testing.T) {
 			false,
 		},
 		{
+			"should pass for matching *struct types",
+			&SomeStruct{},
+			&SomeStruct{},
+			true,
+		},
+		{
+			"should fail for different *struct types",
+			&SomeStruct{},
+			&SomeStruct2{},
+			false,
+		},
+		{
 			"should pass for matching interface types",
 			context.Background(),
+			context.TODO(),
+			true,
+		},
+		{
+			"should pass for matching interface types via new()",
+			new(context.Context),
 			context.TODO(),
 			true,
 		},

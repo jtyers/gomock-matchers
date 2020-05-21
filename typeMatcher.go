@@ -1,8 +1,10 @@
 package gomockmatchers
 
 import (
-	"github.com/golang/mock/gomock"
+	"fmt"
 	"reflect"
+
+	"github.com/golang/mock/gomock"
 )
 
 const TypeMatcherDescription = "callback function returns true"
@@ -17,7 +19,25 @@ type typeMatcher struct {
 }
 
 func (o typeMatcher) Matches(x interface{}) bool {
-	return reflect.TypeOf(o.example) == reflect.TypeOf(x)
+	exampleType := reflect.TypeOf(o.example)
+	xType := reflect.TypeOf(x)
+
+	var exampleElemType reflect.Type
+	if exampleType.Kind() == reflect.Ptr {
+		exampleElemType = exampleType.Elem()
+	}
+
+	if exampleType.Kind() == reflect.Interface || (exampleElemType != nil && exampleElemType.Kind() == reflect.Interface) {
+		//exampleType.Elem().Kind()
+		// for interface examples, check AssignableTo
+		fmt.Printf("exampleType %v\n", exampleType)
+		fmt.Printf("xType %v\n", xType)
+		return xType.AssignableTo(exampleType) || xType.AssignableTo(exampleElemType)
+
+	} else {
+		// for concrete types, check equality
+		return exampleType == xType
+	}
 }
 
 func (o typeMatcher) String() string {
